@@ -1,0 +1,32 @@
+name: docs-verdict-check
+
+# Every spike document must end with a well-formed verdict block (see docs/spikes/README.md).
+on:
+  pull_request:
+    paths:
+      - "docs/spikes/**"
+      - "tools/check-verdicts/**"
+      - ".github/workflows/ci-docs.yml"
+  push:
+    branches: [main]
+    paths:
+      - "docs/spikes/**"
+      - "tools/check-verdicts/**"
+      - ".github/workflows/ci-docs.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verdicts:
+    runs-on: ubuntu-latest
+    steps:
+      # Action majors are pinned from memory (ASSUMED); bump them if "Set up job" cannot resolve one.
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Unit tests for the checker
+        run: python -m unittest discover -s tools/check-verdicts/tests -v
+      - name: Check spike documents
+        run: python tools/check-verdicts/check_verdicts.py docs/spikes
