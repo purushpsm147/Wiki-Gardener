@@ -36,7 +36,14 @@ def pct(x: float) -> str:
         return f"{p:.0f}%"
     if p >= 1:
         return f"{p:.1f}%"
+    if p < 0.01:
+        return "<0.01%"
     return f"{p:.2f}%"
+
+
+def margin_pct(x: float) -> str:
+    """Margins sit near 100 %, so show two decimals instead of rounding the interesting part away."""
+    return f"{x * 100:.2f}%"
 
 
 def hours(minutes: float) -> str:
@@ -137,8 +144,8 @@ def render_report() -> str:
     w("")
 
     # C
-    for y in (0.005, 0.02):
-        w(f"## C. 50k pages, yield {yl(y)}: monthly LLM cost by model and token profile (20 % churn)\n")
+    for n, y in ((1, 0.005), (2, 0.02)):
+        w(f"## C{n}. 50k pages, yield {yl(y)}: monthly LLM cost by model and token profile (20 % churn)\n")
         rows = []
         for mk in ("haiku-4.5", "sonnet-5", "sonnet-4.5", "opus-4.6"):
             row = [f"{models[mk].label} (${models[mk].input_per_mtok:g}/${models[mk].output_per_mtok:g})"]
@@ -176,6 +183,16 @@ def render_report() -> str:
     share_grid(b, "E1. LLM cost as a share of net revenue: base cost, revenue grid")
     share_grid(replace(b, yield_rate=0.02, profile=cm.PROFILES["T3"]), "E2. Same grid with a looser funnel (2 % yield) and section-level prompts (T3)")
     share_grid(k3(models), "E3. Same grid under the stress cost (K3: 2 % yield, T4, Opus 4.6, full monthly re-judgement)")
+
+    # I
+    w("## I. If 'yield' means each flagged page brings several partners (pair_multiplier)\n")
+    w("Base cost and revenue; 50k pages at 0.5 % yield.\n")
+    rows = []
+    for k in (1, 5, 20, 100):
+        s = replace(b, pair_multiplier=float(k))
+        rows.append([f"x{k}", f"{s.candidate_pairs:,}", usd(cm.backfill_llm_cost(s)), usd(cm.monthly_llm_cost(s)), pct(cm.llm_share_of_net(s))])
+    w(md(["Pairs per flagged page", "Candidate pairs", "Backfill cost", "LLM cost / month", "Share of net revenue"], rows))
+    w("")
 
     # F
     w("## F. Break-even: net monthly revenue needed for LLM cost to stay under 30 %\n")
@@ -216,7 +233,7 @@ def render_report() -> str:
     for label, s in cases:
         for take, tl in ((0.17, "17 % take"), (0.0, "0 % take (Runs on Atlassian, first $1M)")):
             s2 = replace(s, take_rate=take)
-            rows.append([label, tl, usd(cm.net_revenue(s2)), usd(cm.monthly_llm_cost(s2)), usd(cm.monthly_compute_cost(s2)), pct(cm.gross_margin(s2))])
+            rows.append([label, tl, usd(cm.net_revenue(s2)), usd(cm.monthly_llm_cost(s2)), usd(cm.monthly_compute_cost(s2)), margin_pct(cm.gross_margin(s2))])
     rows.append(["LLM-free (A3 detector only)", "17 % take", usd(cm.net_revenue(b)), "$0", "n/a (see S2)", "100% of this stage"])
     w(md(["Case", "Atlassian take", "Net revenue / month", "LLM / month", "Forge wait compute / month", "Margin on this stage"], rows))
     w("")
