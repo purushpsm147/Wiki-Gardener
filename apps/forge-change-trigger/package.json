@@ -1,0 +1,31 @@
+{
+  "name": "forge-change-trigger",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Spike S3 proof of concept: a Confluence page edit triggers a check of the changed spans against approved sources. A demo, not the product.",
+  "scripts": {
+    "test": "tsx --test test/*.test.ts",
+    "typecheck": "tsc -p tsconfig.test.json --noEmit",
+    "scan": "tsx scripts/scan-files.ts",
+    "bench": "tsx scripts/bench.ts",
+    "lint:manifest": "forge lint"
+  },
+  "dependencies": {
+    "@forge/api": "^8.2.0",
+    "@forge/bridge": "^7.1.0",
+    "@forge/kvs": "^2.0.7",
+    "@forge/react": "^12.3.0",
+    "@forge/resolver": "^2.0.0",
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@forge/cli": "^14.1.0",
+    "@types/node": "^22.10.0",
+    "@types/react": "^18.3.12",
+    "tsx": "^4.19.2",
+    "typescript": "~5.9.2"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
