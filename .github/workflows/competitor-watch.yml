@@ -1,0 +1,90 @@
+name: competitor-watch
+
+# Weekly: fetch the watched pages, diff against the last snapshot, commit the new snapshot, open an issue if anything changed
+# (or if a source could not be read). The first run on a repository with no snapshot takes the baseline.
+# Run it by hand from the Actions tab (workflow_dispatch) once this is on the default branch to take the baseline now.
+
+on:
+  schedule:
+    - cron: "41 6 * * 1" # Mondays 06:41 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write # commit docs/competitors/snapshots
+  issues: write # open issues
+
+concurrency:
+  group: competitor-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # Action majors are pinned as in the other workflows of this repository (checkout@v5 and setup-python@v6 resolved there).
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Unit tests (a watcher that is not tested should not be trusted)
+        run: python -m unittest discover -s tools/competitor-watch/tests
+
+      - name: Watch
+        id: watch
+        continue-on-error: true # a failed source must still commit what is good and open the issue below
+        run: |
+          python tools/competitor-watch/watch.py run \
+            --snapshots docs/competitors/snapshots \
+            --raw-dir "$RUNNER_TEMP/raw" \
+            --report "$RUNNER_TEMP/report.md" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Keep the raw pages for 14 days (to debug the extractor, or turn into fixtures)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: competitor-watch-raw
+          path: ${{ runner.temp }}/raw
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Commit the snapshot
+        if: steps.watch.outputs.snapshot_changed == 'true'
+        env:
+          SUMMARY: ${{ steps.watch.outputs.summary }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/competitors/snapshots
+          git commit -m "competitor-watch: snapshot $(date -u +%F) ($SUMMARY)"
+          git push
+
+      - name: Open an issue for what changed
+        if: steps.watch.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_TITLE: ${{ steps.watch.outputs.issue_title }}
+        run: |
+          gh label create competitor-watch --color 0E8A16 --description "Weekly competitor snapshot diff" --force
+          gh issue create --title "$ISSUE_TITLE" --label competitor-watch --body-file "$RUNNER_TEMP/report.md"
+
+      - name: Open (or update) an issue when a source could not be read
+        if: steps.watch.outputs.failed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create competitor-watch-broken --color D93F0B --description "competitor-watch could not read a source" --force
+          existing="$(gh issue list --label competitor-watch-broken --state open --json number --jq '.[0].number // empty')"
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file "$RUNNER_TEMP/report.md"
+          else
+            gh issue create --title "competitor-watch: a source could not be read" --label competitor-watch-broken --body-file "$RUNNER_TEMP/report.md"
+          fi
+
+      - name: Fail the job if the watcher reported a problem
+        if: steps.watch.outcome == 'failure'
+        run: |
+          echo "competitor-watch exited non-zero: a source failed, or the tool itself did. See the issue and the step log."
+          exit 1

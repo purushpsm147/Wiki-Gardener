@@ -1,0 +1,111 @@
+{
+  "schema": 1,
+  "user_agent": "wiki-gardener-competitor-watch/0.1 (+https://github.com/purushpsm147/Wiki-Gardener; weekly, robots.txt respected)",
+  "issue_on": "routine",
+  "numeric_change_pct": 5.0,
+  "rating_change": 0.1,
+  "keywords": {
+    "contradiction": ["contradict\\w*", "conflict\\w*", "inconsisten\\w*", "discrepanc\\w*"],
+    "change_time": [
+      "before (?:you )?publish\\w*",
+      "as you (?:type|write|edit)\\w*",
+      "at (?:edit|writing|authoring|publish)(?:ing)?[- ]time",
+      "on (?:save|publish)\\b",
+      "when (?:a )?(?:page|content|document)s? (?:is |are )?(?:created|edited|updated|changed|published|saved)",
+      "real[- ]time",
+      "pre-?publish\\w*",
+      "prevent\\w*",
+      "block\\w* (?:publish\\w*|sav\\w*)",
+      "proactive\\w*"
+    ]
+  },
+  "sources": [
+    {
+      "id": "ai-hygiene-inspector",
+      "name": "AI Hygiene Inspector - Manage Readiness for Confluence",
+      "kind": "marketplace-listing",
+      "role": "competitor",
+      "urls": ["https://marketplace.atlassian.com/apps/512832479/ai-hygiene-inspector-manage-readiness-for-confluence"],
+      "optional_urls": ["https://marketplace.atlassian.com/apps/512832479/ai-hygiene-inspector-manage-readiness-for-confluence?tab=pricing&hosting=cloud"],
+      "require_any_field": ["installs", "rating", "review_count", "price_samples", "price_text", "version", "last_updated"],
+      "provenance": "Named in the owner's brief. Listing URL search-reported 2026-10-01 (vendor Lumito lab; v4.2.0 of 2026-03-16). A search summary said it addresses 'contradictions, duplicates and outdated content', but the listing text it quoted lists stubs, outdated and orphaned pages: whether the listing itself says 'contradiction' is unverified."
+    },
+    {
+      "id": "better-content-archiving",
+      "name": "Better Content Archiving and Analytics for Confluence",
+      "kind": "marketplace-listing",
+      "role": "competitor",
+      "urls": ["https://marketplace.atlassian.com/apps/123/better-content-archiving-and-analytics-for-confluence"],
+      "optional_urls": ["https://marketplace.atlassian.com/apps/123/better-content-archiving-and-analytics-for-confluence?tab=pricing&hosting=cloud"],
+      "require_any_field": ["installs", "rating", "review_count", "price_samples", "price_text", "version", "last_updated"],
+      "provenance": "Named in the owner's brief. Listing URL search-reported 2026-10-01 (vendor Midori Global Consulting; content lifecycle management, archiving, analytics). No contradiction claim was found in search summaries."
+    },
+    {
+      "id": "evergreen-ai-for-confluence",
+      "name": "Evergreen AI for Confluence",
+      "kind": "search",
+      "role": "competitor",
+      "kill_clause_subject": true,
+      "min_text_chars": 0,
+      "expect_text": "Evergreen",
+      "urls": ["https://marketplace.atlassian.com/search?hosting=cloud&product=confluence&query=Evergreen"],
+      "provenance": "Named in the owner's brief and in GATE-S4's kill clause.",
+      "note": "NOT LOCATED. Three web searches on 2026-10-01 found no Marketplace listing with this name; the nearest hits were FreshPage (which has an 'evergreen' content tag) and Better Content Archiving (which supports 'evergreen' pages). This source watches the Marketplace search results for the name. When a listing appears, or the owner supplies its exact URL, change kind to marketplace-listing and set urls. Until then the kill clause cannot be evaluated."
+    },
+    {
+      "id": "atlassian-cloud-changes",
+      "name": "Atlassian Cloud changes (release notes blog)",
+      "kind": "page",
+      "role": "atlassian",
+      "min_text_chars": 500,
+      "urls": ["https://confluence.atlassian.com/cloud/blog"],
+      "mentions": [
+        {"id": "documentation-agent", "all": ["documentation agent"]},
+        {"id": "rovo-content-quality", "all": ["rovo"], "any": ["outdated", "stale", "content quality", "duplicate", "contradict", "conflict", "inconsisten", "hygiene", "freshness", "verif", "clean-up", "cleanup"]}
+      ],
+      "provenance": "Atlassian's weekly 'Atlassian Cloud changes' posts (an example post URL, search-reported 2026-10-01: https://confluence.atlassian.com/cloud/blog/2026/04/atlassian-cloud-changes-apr-13-to-apr-20-2026). The index URL is a guess; the first run will say."
+    },
+    {
+      "id": "atlassian-rovo-confluence-guide",
+      "name": "Atlassian guide: Automate your content workflow with Confluence and Rovo",
+      "kind": "page",
+      "role": "atlassian",
+      "min_text_chars": 500,
+      "urls": ["https://www.atlassian.com/software/confluence/resources/guides/best-practices/confluence-rovo"],
+      "mentions": [
+        {"id": "documentation-agent", "all": ["documentation agent"]},
+        {"id": "rovo-content-quality", "all": ["rovo"], "any": ["outdated", "stale", "content quality", "duplicate", "contradict", "conflict", "inconsisten", "hygiene", "freshness", "verif", "clean-up", "cleanup"]}
+      ],
+      "provenance": "Atlassian's own positioning of Rovo for content upkeep. URL search-reported 2026-10-01. Search summaries describe a Rovo 'Documentation Agent' that reviews pages for staleness and proposes rewrites; no Atlassian page was readable here to confirm."
+    },
+    {
+      "id": "k-ai",
+      "name": "K-AI Document Knowledge Platform",
+      "kind": "page",
+      "role": "competitor",
+      "min_text_chars": 500,
+      "urls": ["https://www.k-ai.ai/en/"],
+      "optional_urls": ["https://www.k-ai.ai/en/news/"],
+      "mentions": [{"id": "confluence-integration", "all": ["confluence"]}],
+      "provenance": "NOT in the owner's brief. Found 2026-10-01: its own pages (search-reported) say it 'continuously detects contradictions, duplicates, obsolescence' and 'detects conflicts in real time', with a Confluence integration. A vendor that claims contradiction detection is a material finding for the differentiation thesis; whether its Confluence integration works at change time is unverified."
+    },
+    {
+      "id": "freshpage",
+      "name": "FreshPage: Trusted Knowledge for Confluence",
+      "kind": "marketplace-listing",
+      "role": "lead",
+      "enabled": false,
+      "urls": ["https://marketplace.atlassian.com/apps/1059183334/freshpage-trusted-knowledge-for-confluence"],
+      "provenance": "Lead, off by default. Trust and freshness banners, review policies and an 'evergreen' content tag; search-reported $13.97 a month for 11 or more users, free up to 10. Probably what 'Evergreen' in the brief gestures at; not a contradiction tool as far as search says."
+    },
+    {
+      "id": "evergreen-team",
+      "name": "evergreen.team (unchecked lead)",
+      "kind": "page",
+      "role": "lead",
+      "enabled": false,
+      "urls": ["https://evergreen.team/"],
+      "provenance": "Lead, off by default. Appeared in a web search for 'Evergreen AI Confluence' on 2026-10-01; nothing is known about what it is, and it may be unrelated."
+    }
+  ]
+}
