@@ -1,0 +1,42 @@
+name: forge-change-trigger
+
+on:
+  pull_request:
+    paths:
+      - "apps/forge-change-trigger/**"
+      - ".github/workflows/ci-forge-change-trigger.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/forge-change-trigger/**"
+      - ".github/workflows/ci-forge-change-trigger.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/forge-change-trigger
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/forge-change-trigger/package-lock.json
+      - name: Install (lockfile only)
+        run: npm ci
+      - name: Typecheck the app, tests and scripts
+        run: npm run typecheck
+      - name: Tests (detector, handler flow, A06, manifest validator, fixtures)
+        run: npm test
+      - name: The offline scanner works from the command line
+        run: |
+          d="$RUNNER_TEMP/export"
+          mkdir -p "$d"
+          cp test/fixtures/pages/policy-data-retention.v1.html "$d/policy.html"
+          cp test/fixtures/pages/runbook-log-rotation.v2.html "$d/runbook.html"
+          npm run --silent scan -- "$d" --approved policy.html | grep -q "Application logs are retained for 30 days."

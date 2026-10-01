@@ -1,0 +1,183 @@
+{
+  "_comment": "Synthetic. Ten pages, three approved sources, three planted contradictions. Written by the same author as the detector, so passing it shows the plumbing works; it says nothing about recall or precision on real content.",
+  "space": {
+    "key": "DEMO",
+    "name": "Conflict Radar demo"
+  },
+  "pages": [
+    {
+      "key": "policy-data-retention",
+      "id": "1001",
+      "title": "Data Retention Policy (Approved)",
+      "role": "approved",
+      "versions": {
+        "v1": "policy-data-retention.v1.html"
+      }
+    },
+    {
+      "key": "policy-access-control",
+      "id": "1002",
+      "title": "Access Control Policy (Approved)",
+      "role": "approved",
+      "versions": {
+        "v1": "policy-access-control.v1.html"
+      }
+    },
+    {
+      "key": "policy-incident-response",
+      "id": "1003",
+      "title": "Incident Response Policy (Approved)",
+      "role": "approved",
+      "versions": {
+        "v1": "policy-incident-response.v1.html"
+      }
+    },
+    {
+      "key": "runbook-log-rotation",
+      "id": "2001",
+      "title": "Runbook: Log Rotation",
+      "role": "procedure",
+      "versions": {
+        "v1": "runbook-log-rotation.v1.html",
+        "v2": "runbook-log-rotation.v2.html",
+        "v3": "runbook-log-rotation.v3.html",
+        "v2-months": "runbook-log-rotation.v2-months.html"
+      }
+    },
+    {
+      "key": "runbook-prod-access",
+      "id": "2002",
+      "title": "Runbook: Production Access",
+      "role": "procedure",
+      "versions": {
+        "v1": "runbook-prod-access.v1.html",
+        "v2": "runbook-prod-access.v2.html"
+      }
+    },
+    {
+      "key": "runbook-sev1-oncall",
+      "id": "2003",
+      "title": "Runbook: Sev1 On-call",
+      "role": "procedure",
+      "versions": {
+        "v1": "runbook-sev1-oncall.v1.html",
+        "v2": "runbook-sev1-oncall.v2.html"
+      }
+    },
+    {
+      "key": "faq-onboarding",
+      "id": "3001",
+      "title": "FAQ: Onboarding",
+      "role": "distractor",
+      "versions": {
+        "v1": "faq-onboarding.v1.html",
+        "v2": "faq-onboarding.v2.html"
+      }
+    },
+    {
+      "key": "arch-overview",
+      "id": "3002",
+      "title": "Architecture Overview",
+      "role": "distractor",
+      "versions": {
+        "v1": "arch-overview.v1.html"
+      }
+    },
+    {
+      "key": "kb-log-retention-summary",
+      "id": "3003",
+      "title": "KB: Log Retention Summary",
+      "role": "distractor",
+      "versions": {
+        "v1": "kb-log-retention-summary.v1.html",
+        "v2": "kb-log-retention-summary.v2.html"
+      }
+    },
+    {
+      "key": "environment-matrix",
+      "id": "3004",
+      "title": "Environment Matrix",
+      "role": "distractor",
+      "versions": {
+        "v1": "environment-matrix.v1.html",
+        "v2": "environment-matrix.v2.html"
+      }
+    }
+  ],
+  "planted": [
+    {
+      "name": "retention-90-to-30",
+      "gate": "GATE-S3",
+      "page": "runbook-log-rotation",
+      "from": "v1",
+      "to": "v2",
+      "approved": "policy-data-retention",
+      "changedQuote": "Application logs are retained for 30 days.",
+      "changedValue": "30 days",
+      "approvedQuote": "Application logs must be retained for 90 days.",
+      "approvedValue": "90 days",
+      "kind": "numeric"
+    },
+    {
+      "name": "vpn-required-to-not-required",
+      "page": "runbook-prod-access",
+      "from": "v1",
+      "to": "v2",
+      "approved": "policy-access-control",
+      "changedQuote": "A VPN connection is not required for read-only production access.",
+      "changedValue": "not",
+      "approvedQuote": "A VPN connection is required for all production access.",
+      "approvedValue": "",
+      "kind": "polarity"
+    },
+    {
+      "name": "sev1-ack-15-to-30-minutes",
+      "page": "runbook-sev1-oncall",
+      "from": "v1",
+      "to": "v2",
+      "approved": "policy-incident-response",
+      "changedQuote": "The on-call engineer must acknowledge a Sev1 page within 30 minutes.",
+      "changedValue": "30 minutes",
+      "approvedQuote": "A Sev1 incident must be acknowledged within 15 minutes.",
+      "approvedValue": "15 minutes",
+      "kind": "numeric"
+    }
+  ],
+  "controls": [
+    {
+      "name": "retention-repair-30-to-90",
+      "page": "runbook-log-rotation",
+      "from": "v2",
+      "to": "v3",
+      "why": "the edit removes the disagreement"
+    },
+    {
+      "name": "retention-90-days-to-3-months",
+      "page": "runbook-log-rotation",
+      "from": "v1",
+      "to": "v2-months",
+      "why": "3 months equals 90 days after unit normalisation"
+    },
+    {
+      "name": "kb-intro-only",
+      "page": "kb-log-retention-summary",
+      "from": "v1",
+      "to": "v2",
+      "why": "near-identical copy of approved sentences; only the intro changed"
+    },
+    {
+      "name": "environment-wording-only",
+      "page": "environment-matrix",
+      "from": "v1",
+      "to": "v2",
+      "why": "a different environment states 14 days; the scope guard must suppress 90 vs 14"
+    },
+    {
+      "name": "faq-unrelated-number",
+      "page": "faq-onboarding",
+      "from": "v1",
+      "to": "v2",
+      "why": "same unit (business days) as an approved sentence, different topic"
+    }
+  ]
+}
