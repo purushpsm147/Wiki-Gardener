@@ -1,0 +1,91 @@
+{
+  "_comment": "Every number here carries its evidence grade. The sandbox that produced this file could not fetch any *.atlassian.com page, so Atlassian figures are ASSUMED (search-reported), a web-search summary of the cited page. Re-grade to VERIFIED only after reading the cited URL yourself. See docs/spikes/01-forge-llm-cost-model.md, 'Confirm locally'.",
+  "fetched": "2026-10-01",
+
+  "models": [
+    {
+      "key": "haiku-4.5",
+      "label": "Claude Haiku 4.5",
+      "forge_model_id": "claude-haiku-4-5-20251001",
+      "input_per_mtok": 1.0,
+      "output_per_mtok": 5.0,
+      "evidence": "ASSUMED (search-reported)",
+      "source": "https://developer.atlassian.com/platform/forge/runtime-reference/forge-llms-api-pricing/",
+      "note": "Equals Anthropic's first-party list price per the claude-api skill's cached table (2026-09-25)."
+    },
+    {
+      "key": "sonnet-4.5",
+      "label": "Claude Sonnet 4.5",
+      "forge_model_id": "claude-sonnet-4-5-20250929",
+      "input_per_mtok": 3.0,
+      "output_per_mtok": 15.0,
+      "evidence": "ASSUMED (search-reported)",
+      "source": "https://developer.atlassian.com/platform/forge/runtime-reference/forge-llms-api-pricing/",
+      "note": "Sonnet-tier price; Anthropic lists Sonnet 4.6 at the same $3/$15."
+    },
+    {
+      "key": "sonnet-5",
+      "label": "Claude Sonnet 5",
+      "forge_model_id": "claude-sonnet-5",
+      "input_per_mtok": 2.0,
+      "output_per_mtok": 10.0,
+      "evidence": "ASSUMED (parity with Anthropic list; Forge's own price for this model was NOT found)",
+      "source": "claude-api skill cached model table, 2026-09-25 (local file, not a Forge price)",
+      "note": "Forge lists this model as supported (search-reported) but no Forge price for it was returned. Parity with Anthropic's list is an inference from the three models whose Forge price matches Anthropic's list."
+    },
+    {
+      "key": "opus-4.6",
+      "label": "Claude Opus 4.6",
+      "forge_model_id": "claude-opus-4-6",
+      "input_per_mtok": 5.0,
+      "output_per_mtok": 25.0,
+      "evidence": "ASSUMED (search-reported)",
+      "source": "https://developer.atlassian.com/platform/forge/runtime-reference/forge-llms-api-pricing/",
+      "note": "Opus 4.7 and 4.8 are listed by Anthropic at the same $5/$25; Forge's price for them was not found."
+    }
+  ],
+
+  "forge_credits": {
+    "evidence": "ASSUMED (search-reported)",
+    "source": "https://developer.atlassian.com/platform/forge/runtime-reference/forge-llms-api-pricing/",
+    "usd_per_million_input_credits": 0.10,
+    "usd_per_million_output_credits": 0.50,
+    "credits_per_token": {"haiku-4.5": 10, "sonnet-4.5": 30, "opus-4.6": 50},
+    "note": "The search summary printed these as 'credits per 1M tokens'; only 'credits per token' is arithmetically consistent with the dollar prices (tests/test_cost_model.py checks this)."
+  },
+
+  "forge_platform": {
+    "evidence": "ASSUMED (search-reported)",
+    "source": "https://developer.atlassian.com/platform/forge/forge-platform-pricing/",
+    "function_usd_per_gb_second": 0.000025,
+    "function_free_gb_seconds_per_month": 200000,
+    "billing_starts": "2026-01-01",
+    "llm_compute_inflation_note": "RFC-117 clarification (search-reported): a Forge LLM call raises Forge Functions compute 15x to 27x versus typical apps, because the function waits for the model; compute (GB-seconds) is billed separately from tokens. https://community.developer.atlassian.com/t/rfc-117-clarification-on-forge-llms-compute-usage-and-pricing/98220"
+  },
+
+  "forge_llm_limits": {
+    "evidence": "ASSUMED (search-reported)",
+    "source": "https://developer.atlassian.com/platform/forge/limits-llm/",
+    "requests_per_minute": 100,
+    "tokens_per_minute_per_installation_per_model": 50000,
+    "context_window_tokens": 200000,
+    "note": "Whether TPM counts input+output is not stated in the summary; the model assumes it does (conservative)."
+  },
+
+  "billing_party": {
+    "evidence": "ASSUMED (search-reported)",
+    "statement": "Forge LLM usage is charged to the developer of the Forge app and counted toward the developer's Forge monthly bill; there is no free monthly quota.",
+    "source": "https://developer.atlassian.com/platform/forge/runtime-reference/forge-llms-api-pricing/"
+  },
+
+  "marketplace_revenue_share": {
+    "evidence": "ASSUMED (search-reported)",
+    "source": "https://www.atlassian.com/blog/development/updates-to-marketplace-revenue-share-2026",
+    "forge_rate_from_2026_04_01": 0.84,
+    "forge_rate_from_2026_10_01": 0.83,
+    "interpretation": "ASSUMED: the 'revenue share rate' is the share the partner KEEPS, so Atlassian's take is 1 - rate (17% from 2026-10-01).",
+    "runs_on_atlassian_rate_until_lifetime_forge_revenue": 1.0,
+    "lifetime_forge_revenue_threshold_usd": 1000000,
+    "note": "The 100% rate is described as being for qualifying Runs on Atlassian apps. Forge remotes are allowed for the Forge rate, but whether a remote-backed app also gets the 100% window was NOT established."
+  }
+}
