@@ -22,6 +22,12 @@ PROCEED / PROCEED-WITH-CONSTRAINT / KILL verdict ([`docs/spikes/`](docs/spikes/R
 | S3 | Does "page edited → conflict surfaced against an approved source, with quotes and offsets" work? | Forge PoC + GATE-S3 verdict |
 | S4 | Has a competitor claimed contradiction / change-time detection? | automated competitor watch + GATE-S4 verdict |
 
+**Status (2026-10-01):** all four spikes are written, each **PROCEED-WITH-CONSTRAINT**, in pull requests
+[#1](https://github.com/purushpsm147/Wiki-Gardener/pull/1) (S1), [#2](https://github.com/purushpsm147/Wiki-Gardener/pull/2) (S2),
+[#3](https://github.com/purushpsm147/Wiki-Gardener/pull/3) (S3) and [#4](https://github.com/purushpsm147/Wiki-Gardener/pull/4) (S4).
+Nothing Atlassian-specific is VERIFIED, the live Forge demo and the competitor baseline are documented local steps, and one
+competitor-claim finding needs reading first: start with [`docs/PHASE-MINUS-1-SUMMARY.md`](docs/PHASE-MINUS-1-SUMMARY.md).
+
 Start here:
 
 - Decision record: [`docs/adr/`](docs/adr/README.md) (ADR-000 … ADR-013, amendments in `docs/adr/amendments/`)
