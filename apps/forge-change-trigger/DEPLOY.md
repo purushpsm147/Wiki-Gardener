@@ -57,7 +57,7 @@ npx forge install -e development -p Confluence -s <your-site>.atlassian.net
 ```
 
 The webpack bundling inside `forge deploy` has never been run on this code (it needs the login), so a bundling error here is a
-finding, not a typo to hide. The install asks you to confirm the scopes: five read-only scopes and app storage, no write scope.
+finding, not a typo to hide. The install asks you to confirm the scopes: four read-only scopes and app storage, no write scope.
 Install **after** step 4, or the ten page creations are processed too.
 
 **7. Run the demo (GATE-S3).** In the site, open *Runbook: Log Rotation*, edit it, change `Application logs are retained for 90 days.`

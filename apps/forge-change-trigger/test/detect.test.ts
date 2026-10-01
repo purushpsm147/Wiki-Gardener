@@ -253,6 +253,42 @@ describe("other conflict kinds and directions", () => {
   });
 });
 
+describe("polarity is held to a higher standard than numbers (measured on unrelated prose by scripts/corpus-probe.ts)", () => {
+  const run = (approvedText: string, changedText: string, options = {}) =>
+    detectConflicts({ changed: page("c", "C", changedText), changedSpans: "all", approved: [page("p", "P", approvedText)] }, options);
+
+  it("needs statements: a heading that merely contains 'no' is not a polarity conflict, a sentence is", () => {
+    assert.deepEqual(run("Breaking changes in version 7", "No breaking changes in version 8"), []);
+    const r = run("There are breaking changes in this release.", "There are no breaking changes in this release.");
+    assert.equal(r.length, 1);
+    assert.equal(r[0]!.kind, "polarity");
+  });
+
+  it("needs close alignment: below 0.7 a difference in 'not' is just two sentences on the same topic", () => {
+    const approvedText = "Backups are encrypted and stored in a separate region.";
+    const changedText = "Backups are not encrypted when they are stored in the same region.";
+    assert.deepEqual(run(approvedText, changedText), []);
+    // The price: this one IS a contradiction, and it is only found when the rule is switched off. Recall on paraphrase is the cost of precision.
+    assert.equal(run(approvedText, changedText, { polarityMinAlignment: 0 }).length, 1);
+  });
+
+  it("does not hold numbers to it: a changed number is reported at the base alignment", () => {
+    const r = run("Backups are encrypted and kept for 35 days in a separate region.", "Backups in the main region are kept for 14 days.");
+    assert.equal(r.length, 1);
+    assert.equal(r[0]!.kind, "numeric");
+    assert.ok(r[0]!.alignment < 0.7, `alignment ${r[0]!.alignment}`);
+  });
+
+  it("reports one conflict per approved page and slot, not one per similar sentence", () => {
+    const approvedText = [
+      "There are no breaking changes in this release.",
+      "There are no breaking changes in this version.",
+      "There are no breaking changes in this update.",
+    ].join("\n");
+    assert.equal(run(approvedText, "There are breaking changes in this release.").length, 1);
+  });
+});
+
 describe("rules that exist to prevent false positives (ablations)", () => {
   it("best-match gating: without it, a correct repair is flagged against a sibling sentence", () => {
     const repaired = edit("runbook-log-rotation", "v2", "v3");

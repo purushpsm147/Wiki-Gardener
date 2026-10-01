@@ -95,6 +95,17 @@ describe("handlePageUpdated: other outcomes", () => {
     assert.deepEqual((store.get(resultKey("2001")) as StoredResult).conflicts, []);
   });
 
+  it("skips a repeated delivery for a version it already checked, after one page read", async () => {
+    const site = fixtureSite();
+    const first = harness(site);
+    await handlePageUpdated(event("2001"), first.deps);
+    const reads = site.requests.length;
+    const second = harness(site, { kvs: first.deps.kvs });
+    assert.equal(await handlePageUpdated(event("2001"), second.deps), null);
+    assert.equal(site.requests.length, reads + 1, "only the current page is read again");
+    assert.match(second.logs.join("\n"), /already checked/);
+  });
+
   it("treats a first version as entirely changed (audit semantics)", async () => {
     const site = new FakeSite();
     for (const p of dataset.pages.filter((x) => x.role === "approved")) site.addPage(p.id, p.title, [{ storage: storageOf(p.key, "v1") }]);

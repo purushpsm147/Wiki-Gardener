@@ -70,6 +70,16 @@ export interface DetectOptions {
   gating?: boolean;
   /** Skip comparisons across different environments ("Staging ..." against "Production ..."). Default true. Exists for ablation tests. */
   scopeGuard?: boolean;
+  /**
+   * A negation difference counts only between sentences aligned at least this closely. Prose is full of "not" in sentences that merely
+   * share a topic; a contradiction by negation is a restatement. Default 0.7. Measured on unrelated prose by `scripts/corpus-probe.ts`.
+   */
+  polarityMinAlignment?: number;
+  /**
+   * A negation difference counts only between statements: both sentences need an auxiliary or modal ("is", "must", "can") and at
+   * least this many content tokens, which headings and fragments lack. Default 3.
+   */
+  polarityMinTokens?: number;
   /** Keep at most this many conflicts, highest severity first. Default: all. */
   maxResults?: number;
 }

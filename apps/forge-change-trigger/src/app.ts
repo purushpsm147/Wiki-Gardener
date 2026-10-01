@@ -131,7 +131,13 @@ export async function handlePageUpdated(event: unknown, deps: Deps): Promise<Sto
   }
 
   const earlier = await deps.kvs.get<StoredResult>(resultKey(current.id));
-  const base = baselineVersion(current.version.number, parsed.versionNumber, typeof earlier?.version === "number" ? earlier.version : undefined);
+  const lastChecked = typeof earlier?.version === "number" ? earlier.version : undefined;
+  if (lastChecked === current.version.number) {
+    // Delivery may repeat, and an update need not create a version (`updateTrigger` has other causes). Neither needs another check.
+    deps.log(JSON.stringify({ msg: "conflict-radar.skip", reason: "this version was already checked", pageId: current.id, version: lastChecked }));
+    return null;
+  }
+  const base = baselineVersion(current.version.number, parsed.versionNumber, lastChecked);
   const previous = base === null ? null : await deps.getPage(current.id, { version: base });
 
   const approvedPages: PageDoc[] = [];

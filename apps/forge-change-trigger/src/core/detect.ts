@@ -22,6 +22,8 @@ import type { Conflict, ConflictKind, DetectOptions, PageText, Quote, Sentence, 
  */
 
 export const DEFAULT_ALIGN_THRESHOLD = 0.5;
+export const DEFAULT_POLARITY_MIN_ALIGNMENT = 0.7;
+export const DEFAULT_POLARITY_MIN_TOKENS = 3;
 
 const BASE_SEVERITY: Record<ConflictKind, number> = { polarity: 0.9, antonym: 0.8, numeric: 0.7 };
 
@@ -96,8 +98,19 @@ interface Finding {
   explanation: string;
 }
 
+const contentTokens = (text: string): number => templateTokens(text).filter((t) => t !== "<num>").length;
+
+/** An auxiliary or modal: what separates a statement ("Guest access is not allowed.") from a heading or fragment ("No breaking changes"). */
+const AUXILIARY = /\b(?:is|are|was|were|be|been|must|should|shall|may|can|cannot|could|will|would|does|do|did|has|have|had)\b/i;
+const isStatement = (text: string, minTokens: number): boolean => AUXILIARY.test(text) && contentTokens(text) >= minTokens;
+
+interface PolarityRules {
+  minAlignment: number;
+  minTokens: number;
+}
+
 /** What differs between an edited sentence and one approved sentence it is aligned with. Empty means they agree. */
-function findingsFor(changedPage: PageText, al: Alignment): Finding[] {
+function findingsFor(changedPage: PageText, al: Alignment, polarity: PolarityRules): Finding[] {
   const out: Finding[] = [];
   for (const mm of numericMismatches(extractQuantities(al.changed.text), extractQuantities(al.approved.text))) {
     out.push({
@@ -111,7 +124,8 @@ function findingsFor(changedPage: PageText, al: Alignment): Finding[] {
 
   const cNeg = isNegated(al.changed.text);
   const aNeg = isNegated(al.approved.text);
-  if (cNeg !== aNeg) {
+  const comparable = al.cosine >= polarity.minAlignment && isStatement(al.changed.text, polarity.minTokens) && isStatement(al.approved.text, polarity.minTokens);
+  if (cNeg !== aNeg && comparable) {
     const hit = negations((cNeg ? al.changed : al.approved).text)[0]!;
     const anchor = (s: Sentence): number => polarityAnchor(s.text);
     out.push({
@@ -153,6 +167,10 @@ export function detectConflicts(input: DetectInput, options: DetectOptions = {})
   const margin = options.alignMargin ?? DEFAULT_ALIGN_MARGIN;
   const guard = options.scopeGuard ?? true;
   const gating = options.gating ?? true;
+  const polarity: PolarityRules = {
+    minAlignment: options.polarityMinAlignment ?? DEFAULT_POLARITY_MIN_ALIGNMENT,
+    minTokens: options.polarityMinTokens ?? DEFAULT_POLARITY_MIN_TOKENS,
+  };
   const changedSentences = sentencesTouching(splitSentences(input.changed.text), input.changedSpans);
   if (changedSentences.length === 0) return [];
 
@@ -176,7 +194,7 @@ export function detectConflicts(input: DetectInput, options: DetectOptions = {})
       .filter((a) => !gating || a.cosine >= best - margin - 1e-12)
       .map((al) => {
         const relation = guard ? scopeRelation(al.changed.text, al.approved.text) : "same";
-        return { al, relation, comparable: relation === "same" || relation === "changed-narrower", findings: findingsFor(input.changed, al) };
+        return { al, relation, comparable: relation === "same" || relation === "changed-narrower", findings: findingsFor(input.changed, al, polarity) };
       });
     if (gating && evaluated.some((e) => e.comparable && e.findings.length === 0)) continue; // a consistent counterpart exists
 
@@ -202,7 +220,16 @@ export function detectConflicts(input: DetectInput, options: DetectOptions = {})
     }
   }
 
-  const ranked = [...found.values()].sort(
+  // One edited sentence can align with several sentences of the same approved page (a heading repeated per version, a list of
+  // siblings). Report the strongest per (edited sentence, approved page, kind, slot), not one alarm for each.
+  const strongest = new Map<string, Conflict>();
+  for (const c of found.values()) {
+    const key = [c.changed.start, c.approved.pageId, c.kind, c.slot].join("|");
+    const have = strongest.get(key);
+    if (!have || c.severity > have.severity) strongest.set(key, c);
+  }
+
+  const ranked = [...strongest.values()].sort(
     (x, y) => y.severity - x.severity || y.alignment - x.alignment || x.changed.start - y.changed.start || (x.id < y.id ? -1 : 1),
   );
   return options.maxResults === undefined ? ranked : ranked.slice(0, Math.max(0, options.maxResults));
