@@ -1,0 +1,148 @@
+{
+  "meta": {
+    "note": "MEASURED on this machine only. Not Forge/Lambda hardware. Synthetic Zipf pages with XHTML-ish markup.",
+    "date": "2026-10-01T12:24:11.335Z",
+    "node": "v22.22.0",
+    "v8": "12.4.254.21-node.33",
+    "platform": "linux x64",
+    "cpu_model": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+    "cpu_count": 4,
+    "total_mem_gb": 15.7,
+    "k": 128,
+    "bands": 16,
+    "rows": 8,
+    "shingle_words": 5,
+    "rounds": 7,
+    "gc_exposed": true
+  },
+  "fingerprint": [
+    {
+      "markup": "light",
+      "words": 300,
+      "pages": 400,
+      "storage_bytes_per_page": 2665,
+      "storage_bytes_per_word": 8.9,
+      "shingles_per_page": 296,
+      "us_per_page_median": 133.6,
+      "us_per_page_p10": 132.8,
+      "us_per_page_p90": 134,
+      "us_per_word_median": 0.445
+    },
+    {
+      "markup": "light",
+      "words": 1500,
+      "pages": 120,
+      "storage_bytes_per_page": 13268,
+      "storage_bytes_per_word": 8.8,
+      "shingles_per_page": 1496,
+      "us_per_page_median": 411.7,
+      "us_per_page_p10": 339.7,
+      "us_per_page_p90": 623.4,
+      "us_per_word_median": 0.274
+    },
+    {
+      "markup": "light",
+      "words": 6000,
+      "pages": 40,
+      "storage_bytes_per_page": 53097,
+      "storage_bytes_per_word": 8.8,
+      "shingles_per_page": 5996,
+      "us_per_page_median": 1473.8,
+      "us_per_page_p10": 1372.4,
+      "us_per_page_p90": 1575.6,
+      "us_per_word_median": 0.246
+    },
+    {
+      "markup": "light",
+      "words": 20000,
+      "pages": 12,
+      "storage_bytes_per_page": 176417,
+      "storage_bytes_per_word": 8.8,
+      "shingles_per_page": 19996,
+      "us_per_page_median": 6189.8,
+      "us_per_page_p10": 5681.4,
+      "us_per_page_p90": 6507.1,
+      "us_per_word_median": 0.309
+    },
+    {
+      "markup": "heavy",
+      "words": 300,
+      "pages": 400,
+      "storage_bytes_per_page": 8646,
+      "storage_bytes_per_word": 28.8,
+      "shingles_per_page": 296,
+      "us_per_page_median": 109.5,
+      "us_per_page_p10": 104.6,
+      "us_per_page_p90": 120.9,
+      "us_per_word_median": 0.365
+    },
+    {
+      "markup": "heavy",
+      "words": 1500,
+      "pages": 120,
+      "storage_bytes_per_page": 43287,
+      "storage_bytes_per_word": 28.9,
+      "shingles_per_page": 1496,
+      "us_per_page_median": 666.4,
+      "us_per_page_p10": 476.8,
+      "us_per_page_p90": 711.1,
+      "us_per_word_median": 0.444
+    },
+    {
+      "markup": "heavy",
+      "words": 6000,
+      "pages": 40,
+      "storage_bytes_per_page": 172833,
+      "storage_bytes_per_word": 28.8,
+      "shingles_per_page": 5996,
+      "us_per_page_median": 1399.1,
+      "us_per_page_p10": 1375.1,
+      "us_per_page_p90": 1698.1,
+      "us_per_word_median": 0.233
+    },
+    {
+      "markup": "heavy",
+      "words": 20000,
+      "pages": 12,
+      "storage_bytes_per_page": 577637,
+      "storage_bytes_per_word": 28.9,
+      "shingles_per_page": 19996,
+      "us_per_page_median": 8754.1,
+      "us_per_page_p10": 7773.5,
+      "us_per_page_p90": 9535.7,
+      "us_per_word_median": 0.438
+    }
+  ],
+  "lsh_index_memory": [
+    {
+      "pages": 50000,
+      "entries": 800000,
+      "naive_map_heap_mb": 83,
+      "naive_build_ms": 394,
+      "compact_typed_array_mb": 3.1,
+      "compact_theoretical_mb": 9.2,
+      "compact_build_ms": 508,
+      "_kept_alive": 48
+    },
+    {
+      "pages": 100000,
+      "entries": 1600000,
+      "naive_map_heap_mb": 166,
+      "naive_build_ms": 1169,
+      "compact_typed_array_mb": 6.9,
+      "compact_theoretical_mb": 18.3,
+      "compact_build_ms": 1007,
+      "_kept_alive": 48
+    },
+    {
+      "pages": 250000,
+      "entries": 4000000,
+      "naive_map_heap_mb": 386.2,
+      "naive_build_ms": 3052,
+      "compact_typed_array_mb": 17.2,
+      "compact_theoretical_mb": 45.8,
+      "compact_build_ms": 2501,
+      "_kept_alive": 48
+    }
+  ]
+}

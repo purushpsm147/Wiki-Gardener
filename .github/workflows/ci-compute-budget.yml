@@ -1,0 +1,34 @@
+name: compute-budget
+
+on:
+  pull_request:
+    paths:
+      - "tools/compute-budget/**"
+      - ".github/workflows/ci-compute-budget.yml"
+  push:
+    branches: [main]
+    paths:
+      - "tools/compute-budget/**"
+      - ".github/workflows/ci-compute-budget.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # Action majors are pinned from memory (ASSUMED); bump them if "Set up job" cannot resolve one.
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+      - name: Unit tests
+        run: python -m unittest discover -s tools/compute-budget/tests -v
+      - name: BUDGET.md is up to date
+        run: python tools/compute-budget/run.py --check
+      - name: Benchmark script parses
+        run: node --check tools/compute-budget/bench/minhash-bench.mjs

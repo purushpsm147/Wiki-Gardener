@@ -1,0 +1,131 @@
+{
+  "_comment": "Every number carries its evidence grade. This sandbox cannot fetch *.atlassian.com, so Atlassian limits are ASSUMED (search-reported): a web-search summary of the cited page, fetched 2026-10-01. Entries graded VERIFIED were read directly from an npm package tarball. Re-grade only after reading the cited URL yourself. See docs/spikes/02-forge-only-compute-feasibility.md, 'Confirm locally'.",
+  "fetched": "2026-10-01",
+
+  "manifest_schema": {
+    "evidence": "VERIFIED (@forge/manifest@13.6.0 out/schema/manifest-schema.json, from registry.npmjs.org, read 2026-10-01)",
+    "function_timeoutSeconds": {"min": 1, "max": 900},
+    "function_memoryMB_schema_maximum": 4096,
+    "function_memoryMB_description": "You can configure memory between 128 MB and 1024 MB in 1-MB increments. The default value is 512 MB.",
+    "app_runtime_memoryMB_description": "between 128 MB and 1024 MB ... default 512 MB",
+    "cpu_scales_with_memory": "Increasing the function memory also increases its CPU allocation.",
+    "architecture": "Lambda architecture, 'x86_64' (default) or 'arm64'",
+    "runtime_names": ["nodejs20.x", "nodejs22.x", "nodejs24.x"],
+    "scheduledTrigger_intervals": ["fiveMinute", "hour", "day", "week"],
+    "consumer_queue_name_max_length": 36,
+    "note": "The schema's memoryMB maximum (4096) disagrees with its own description (1024). The model uses 1024, the documented figure.",
+    "containers": "services[].containers[] with key, tag, health (http route), resources.cpu (e.g. '500m' or '1'), resources.memory (e.g. '512Mi', '2Gi'); services[].scaling {min >= 0, max >= 1}; consumers and scheduled triggers may target an 'endpoint' instead of a function."
+  },
+
+  "forge_functions": {
+    "evidence": "ASSUMED (search-reported)",
+    "source": "https://developer.atlassian.com/platform/forge/limits-invocation/",
+    "timeout_seconds_async_and_scheduled_max": 900,
+    "timeout_seconds_async_and_scheduled_default": 55,
+    "timeout_seconds_ui_modules": 25,
+    "memory_mb_default": 512,
+    "memory_mb_max": 1024,
+    "request_payload_mb_max": 5,
+    "outbound_request_timeout_seconds_in_async_max": 180,
+    "async_cyclic_depth_limit": 1000,
+    "user_invocations_per_minute_per_user_per_installation": 1200,
+    "user_invocations_per_minute_per_installation": 7000
+  },
+
+  "async_events": {
+    "evidence": "ASSUMED (search-reported)",
+    "source": "https://developer.atlassian.com/platform/forge/limits-async-events/",
+    "events_per_push_max": 50,
+    "combined_payload_kb_max": 200,
+    "events_pushed_per_minute_max": 500,
+    "retry_backoff_max_minutes": 15,
+    "note": "Scope of the 500-per-minute figure (per installation or per app) is not stated in the summary."
+  },
+
+  "forge_sql": {
+    "evidence": "ASSUMED (search-reported)",
+    "source": "https://developer.atlassian.com/platform/forge/storage-reference/sql/",
+    "stored_bytes_per_installation_production": 1073741824,
+    "tables_max": 200,
+    "dml_requests_per_second": 150,
+    "ddl_requests_per_minute": 25,
+    "row_bytes_max": 6291456,
+    "query_execution_seconds_per_minute": 62.5
+  },
+
+  "forge_kvs": {
+    "evidence": "ASSUMED (search-reported)",
+    "source": "https://developer.atlassian.com/platform/forge/limits-kvs-ce/",
+    "key_chars_max": 500,
+    "value_kib_max": 240,
+    "query_results_max": 100,
+    "requests_per_second_per_installation": 1000
+  },
+
+  "forge_prices": {
+    "evidence": "ASSUMED (search-reported)",
+    "source": "https://developer.atlassian.com/platform/forge/forge-platform-pricing/",
+    "function_usd_per_gb_second": 0.000025,
+    "function_free_gb_seconds_per_month": 200000,
+    "sql_storage_usd_per_gb_hour": 0.0007685,
+    "sql_storage_free_gb_hours_per_month": 730,
+    "sql_compute_usd_per_hour": 0.143,
+    "sql_compute_free_hours_per_month": 1,
+    "sql_requests_usd_per_million": 1.929,
+    "sql_requests_free_per_month": 100000,
+    "kvs_read_usd_per_gb": 0.055,
+    "kvs_write_usd_per_gb": 1.09,
+    "kvs_free_gb_per_month_each": 0.1,
+    "note": "Whether free allowances are per app or per installation is not stated in the summary."
+  },
+
+  "containers": {
+    "evidence": "ASSUMED (search-reported)",
+    "source": "https://developer.atlassian.com/platform/forge/containers-reference/",
+    "status": "Preview (some doc pages still titled EAP)",
+    "max_cpu_millis": 1000,
+    "max_memory_mib": 2048,
+    "usd_per_vcpu_hour": 0.07177,
+    "usd_per_gib_hour": 0.00786,
+    "pricing_model": "reservation-based: billed for reserved CPU and memory whether or not requests are handled",
+    "scaling_note": "The EAP-era page says one instance, no scaling; the Preview announcement says the scaling profile can be customised per environment and region, and the manifest schema has scaling min/max. The sources disagree.",
+    "runs_on_atlassian_note": "Atlassian describes container services as eligible for Runs on Atlassian (search-reported; not confirmed against the program page)."
+  },
+
+  "confluence_rest_quota": {
+    "evidence": "ASSUMED (search-reported)",
+    "source": "https://developer.atlassian.com/cloud/confluence/rate-limiting/",
+    "enforcement_from": "2026-03-02",
+    "points_per_request_base": 1,
+    "points_per_core_object": 1,
+    "points_per_identity_object": 2,
+    "write_requests_base_only": true,
+    "tier1_global_pool_points_per_hour_per_app": 65000,
+    "tier2_per_tenant_standard": {"base_points_per_hour": 100000, "points_per_user_per_hour": 10},
+    "tier2_per_tenant_premium": {"base_points_per_hour": 130000, "points_per_user_per_hour": 20},
+    "tier2_per_tenant_enterprise": {"base_points_per_hour": 150000, "points_per_user_per_hour": 30},
+    "tier2_note": "Per-tenant pools are assigned only after review for apps with exceptionally high or concentrated usage; increases cannot be requested on demand.",
+    "applies_to": "Forge, Connect and OAuth 2.0 (3LO) apps"
+  },
+
+  "forge_remote_tokens": {
+    "evidence": "ASSUMED (search-reported)",
+    "source": "https://developer.atlassian.com/platform/forge/remote/calling-product-apis/",
+    "app_system_token_min_ttl_hours": 2,
+    "token_max_ttl_hours": 4,
+    "proactive_refresh_endpoint": false,
+    "note": "A 'Forge Remote access to tokens anytime' Preview exists and may relax this."
+  },
+
+  "runs_on_atlassian": {
+    "evidence": "ASSUMED (search-reported)",
+    "source": "https://developer.atlassian.com/platform/forge/runs-on-atlassian/",
+    "criteria": [
+      "Apps exclusively use Atlassian-hosted compute and storage",
+      "Apps support data residency matching the host Atlassian app",
+      "Customers can control external data egress (for example analytics and logs) via admin controls"
+    ],
+    "manifest_must_not_list": ["external fetch domains (except analytics without in-scope end-user data)", "remotes", "connect modules", "providers", "dynamic web triggers"],
+    "not_eligible": ["customer-managed egress", "customer-managed remotes"]
+  }
+}
